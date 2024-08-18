@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 
 
-def fazConvolucao(imageLink, kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]))
+def fazConvolucao(imageLink, kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])):
   img_in = cv2.imread(imageLink)
   print(img_in.shape)
   img_out = np.zeros(img_in.shape, dtype=np.uint8)
