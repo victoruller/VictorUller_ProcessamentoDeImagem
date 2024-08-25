@@ -75,6 +75,7 @@ def transformaEmLogaritmica(img):
 
 #POTÊNCIA (GAMMA)
 def transformaGamma(img, gamma=1, c=1):
+#para desvendar imagens escuras, gamma <1 (0.4 até 0.7 normalmente), para claras, gamma>1 (1.5 até 3 normalmente)
     
   img_in = img
   img_out = c * np.power(img_in,  gamma) 
