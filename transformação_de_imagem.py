@@ -70,3 +70,12 @@ def transformaEmLogaritmica(img):
   
   img_out = c*np.log(1+img_in)
   return img_out
+
+
+
+#POTÊNCIA (GAMMA)
+def transformaGamma(img, gamma=1, c=1):
+    
+  img_in = img
+  img_out = c * np.power(img_in,  gamma) 
+  return img_out
