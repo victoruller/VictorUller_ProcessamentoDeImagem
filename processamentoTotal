@@ -1,1 +1,89 @@
+# parte 0
+from google.colab import drive
+import cv2
+import os
+# lista de funcoes:
+# ruidoSalPimenta
+# ruidoGaussiano
+# erosao
+# dilatacao
+# ruidoSalPimenta
+# ruidoSal
+# ruidoPimenta
+# LimiarP2P
+# grayScale
+#
+#
+
+def processamentoTotal(inicioNome_imagem_out='Sem Nome',
+                       nomeFuncao='',
+                       img_in = None,
+                       inicioParam1=0, fimParam1=0, passoParam1=1,
+                       inicioParam2=0, fimParam2=0, passoParam2=1,
+                       caminhoPastaDrive='/content/drive/My Drive/'):
+
+  if not os.path.exists(caminhoPastaDrive):
+      os.makedirs(caminhoPastaDrive)
+
+ #   -----     -----     -----     -----     -----     -----     -----     -----      -----     -----     -----     -----     -----     -----     -----     -----
+  if(nomeFuncao == 'ruidoGaussiano'):
+    img_out = img_in.copy()
+
+    for param1 in range(inicioParam1,fimParam1, passoParam1):
+      img_out = random_noise(img_out, 'gaussian', cv.IMREAD_GRAYSCALE)*255+img_out
+      img_out = np.uint8(img_out.clip(0, 255))
+      if(param1 >= inicioParam1):
+        cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '_' + str(param1) + 'passadas' + '.jpg')), img_out)
+    return 1
+#   -----     -----     -----     -----     -----     -----     -----     -----      -----     -----     -----     -----     -----     -----     -----     -----
+  if(nomeFuncao == 'erosao'):
+
+    for param1 in range(inicioParam1, fimParam1, passoParam1):
+      img_out = erosao(img_in, param1)
+      cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '_kernel' + str(param1) + 'x' + str(param1) + '.jpg')), img_out)
+    return 1
+#   -----     -----     -----     -----     -----     -----     -----     -----      -----     -----     -----     -----     -----     -----     -----     -----
+  if(nomeFuncao == 'dilatacao'):
+    for param1 in range(inicioParam1, fimParam1, passoParam1):
+      img_out = erosao(img_in, param1)
+      cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '_kernel' + str(param1) + 'x' + str(param1) + '.jpg')), img_out)
+    return 1
+
+  if(nomeFuncao == 'ruidoSalPimenta'):
+    for param1 in np.arange(inicioParam1, fimParam1, passoParam1):
+      for param2 in range(inicioParam2, fimParam2, passoParam2):
+        img_out = ruidoSalPimenta(img_in, param1, param2)
+        cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + 'Grau ' + str(param1) + '_Tam ' + str(param2) + '.jpg')), img_out)
+    return 1
+  if(nomeFuncao == 'ruidoSal'):
+    for param1 in np.arange(inicioParam1, fimParam1, passoParam1):
+      for param2 in range(inicioParam2, fimParam2, passoParam2):
+        img_out = ruidoSal(img_in, param1, param2)
+        cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + 'Grau ' + str(param1) + '_Tam ' + str(param2) + '.jpg')), img_out)
+    return 1
+  if(nomeFuncao == 'ruidoPimenta'):
+    for param1 in np.arange(inicioParam1, fimParam1, passoParam1):
+      for param2 in range(inicioParam2, fimParam2, passoParam2):
+        img_out = ruidoPimenta(img_in, param1, param2)
+        cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + 'Grau ' + str(param1) + '_Tam ' + str(param2) + '.jpg')), img_out)
+    return 1
+
+
+  if(nomeFuncao == 'LimiadorP2P'):
+    for param1 in range(inicioParam1, fimParam1, passoParam1):
+      img_out = limiadorP2P(img_in, param1)
+      cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '(limiar' + str(param1) + ').jpg')), img_out)
+    return 1
+
+
+  if(nomeFuncao == 'LimiadorOtsu'):
+    img_out = limiadorOtsu(img_in)
+    cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '.jpg')), img_out)
+    return 1
+
+
+  if(nomeFuncao == 'grayScale'):
+    img_out = grayScale(img_in)
+    cv.imwrite(os.path.join(caminhoPastaDrive, (inicioNome_imagem_out + '.jpg')), img_out)
+    return 1
 
