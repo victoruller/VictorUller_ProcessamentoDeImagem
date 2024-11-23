@@ -1,0 +1,22 @@
+
+def upscaling(image_in, sai=2):
+  image_out = np.zeros((image_in.shape[0]*sai,image_in.shape[1]*sai))
+
+
+  for i in range(0, image_in.shape[0], 1):
+    for j in range(0, image_in.shape[1], 1):
+
+
+
+
+      # coloca todos os pixels de saida iguais ao de entrada
+      for v in range(0, sai, 1):
+        for u in range(0, sai, 1):
+          image_out[i*sai+v, j*sai+u] = image_in[i,j]
+
+
+      
+
+
+
+  return image_out
