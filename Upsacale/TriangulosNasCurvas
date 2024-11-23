@@ -1,6 +1,6 @@
 
-def upscaling_triangulo(image_in, sai=2):
-  image_out = np.zeros((image_in.shape[0]*sai,image_in.shape[1]*sai))
+def upscaling_triangulo(image_in, tam=2):
+  image_out = np.zeros((image_in.shape[0]*tam,image_in.shape[1]*tam))
   image_in = cv.copyMakeBorder(image_in, 1, 2, 1, 2, cv.BORDER_REFLECT, value=0)
 
 
@@ -9,53 +9,56 @@ def upscaling_triangulo(image_in, sai=2):
 
 
       # Cria um kernel 4x4 ao redor do pixel em questão
-      I, E, F, J = image_in[1+i-1,1+j-1], image_in[1+i-1,1+j], image_in[1+i-1,1+j+1], image_in[1+i-1,1+j+2]
-      G, A, B, K = image_in[1+i,  1+j-1], image_in[1+i,  1+j], image_in[1+i,  1+j+1], image_in[1+i,  1+j+2]
-      H, C, D, L = image_in[1+i+1,1+j-1], image_in[1+i+1,1+j], image_in[1+i+1,1+j+1], image_in[1+i+1,1+j+2]
-      M, N, O, P = image_in[1+i+2,1+j-1], image_in[1+i+2,1+j], image_in[1+i+2,1+j+1], image_in[1+i+2,1+j+2]
+      E = image_in[1+i-1,1+j]
+      G, A, B = image_in[1+i,  1+j-1], image_in[1+i,  1+j], image_in[1+i,  1+j+1]
+      C = image_in[1+i+1,1+j]
 
 
-      # coloca todos os pixels de saida iguais ao de entrada
-      for v in range(0, sai, 1):
-        for u in range(0, sai, 1):
-          image_out[i*sai+v, j*sai+u] = A
+      # coloca todos os pixels de tamda iguais ao de entrada
+      for v in range(0, tam, 1):
+        for u in range(0, tam, 1):
+          image_out[i*tam+v, j*tam+u] = A
 
       # Complementa as curvas (Faz um triangulo nelas)
       '''
       if(C >= B-12 and C <= B+12 and C != A and B != A):
-        for v in range(0, sai, 1):
-          for u in range(0, sai, 1):
-            if(v >= sai-u):
-              image_out[i*sai+v, j*sai+u] = np.uint8(np.floor(C + B) * 0.5)
+        x = np.uint8(np.floor(C + B) * 0.5)
+        for v in range(0, tam, 1):
+          for u in range(0, tam, 1):
+            if(v >= tam-u):
+              image_out[i*tam+v, j*tam+u] = x
             #else:
-            #  image_out[i*sai+v, j*sai+u] = A
+            #  image_out[i*tam+v, j*tam+u] = A
 
       if(G >= C-12 and G <= C+12 and G != A and C != A):
-        for v in range(0, sai, 1):
-          for u in range(0, sai, 1):
+        x = np.uint8(np.floor(G + C) * 0.5)
+        for v in range(0, tam, 1):
+          for u in range(0, tam, 1):
             if(v > u):
-              image_out[i*sai+v, j*sai+u] = np.uint8(np.floor(G + C) * 0.5)
+              image_out[i*tam+v, j*tam+u] = x
             #else:
-            #  image_out[i*sai+v, j*sai+u] = A
+            #  image_out[i*tam+v, j*tam+u] = A
      '''
 
 
       
       if(E >= B-12 and E <= B+12 and E != A and B != A):
-        for v in range(0, sai, 1):
-          for u in range(v, sai, 1):
+        x = np.uint8(np.floor(B + E) * 0.5)
+        for v in range(0, tam, 1):
+          for u in range(v, tam, 1):
             if(v < u):
-              image_out[i*sai+v, j*sai+u] = np.uint8(np.floor(B + E) * 0.5)
+              image_out[i*tam+v, j*tam+u] = x
             #else:
-            #  image_out[i*sai+v, j*sai+u] = A
+            #  image_out[i*tam+v, j*tam+u] = A
 
       if(G >= E-12 and G <= E+12 and G != A and E != A):
-        for v in range(0, sai, 1):
-          for u in range(0, sai, 1):
-            if(v+1 < sai-u):
-              image_out[i*sai+v, j*sai+u] = np.uint8(np.floor(G + E) * 0.5)
+        x = np.uint8(np.floor(G + E) * 0.5)
+        for v in range(0, tam, 1):
+          for u in range(0, tam, 1):
+            if(v+1 < tam-u):
+              image_out[i*tam+v, j*tam+u] = x
             #else:
-            #  image_out[i*sai+v, j*sai+u] = A
+            #  image_out[i*tam+v, j*tam+u] = A
 
 
 
