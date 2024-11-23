@@ -1,0 +1,99 @@
+# ele não está funcionando de forma adequada
+
+def upscale_2xSai_Grayscale(image_in):
+
+  image_out = np.zeros((image_in.shape[0]*2,image_in.shape[1]*2))
+  image_in = cv.copyMakeBorder(image_in, 1, 2, 1, 2, cv.BORDER_REFLECT, value=0)
+
+
+  for i in range(0, image_in.shape[0]-3, 1):
+    for j in range(0, image_in.shape[1]-3, 1):
+
+
+
+      # Cria um kernel 4x4 ao redor do pixel em questão
+      I, E, F, J = image_in[1+i-1,1+j-1], image_in[1+i-1,1+j], image_in[1+i-1,1+j+1], image_in[1+i-1,1+j+2]
+      G, A, B, K = image_in[1+i,  1+j-1], image_in[1+i,  1+j], image_in[1+i,  1+j+1], image_in[1+i,  1+j+2]
+      H, C, D, L = image_in[1+i+1,1+j-1], image_in[1+i+1,1+j], image_in[1+i+1,1+j+1], image_in[1+i+1,1+j+2]
+      M, N, O, P = image_in[1+i+2,1+j-1], image_in[1+i+2,1+j], image_in[1+i+2,1+j+1], image_in[1+i+2,1+j+2]
+
+
+      # Procura bordas diagonais em A-D e B-C
+      if(A == D and B != C):# Se há uma borda seguindo apenas A-D
+        if((A == E and B == L) or (A == C and A == F and B != E and B == J)):
+          insereDireita = A
+        else:
+          insereDireita = np.uint8(np.floor((A + B) * 0.5))
+
+        if((A == G and C == O) or (A == B and A == H and G != C and C == M)):
+          insereBaixo = A
+        else:
+          insereBaixo = A#np.uint8(round((A + C) * 0.5))
+
+        insereBaixoDireita = A
+
+      elif(A != D and B == C):# Se há uma borda seguindo apenas B-C
+        if((A == H and B == F) or (B == E and B == D and A != F and A == I)):
+          insereDireita = B
+        else:
+          insereDireita = np.uint8(np.floor((A + B) * 0.5))
+
+        if((C == H and A == F) or (C == G and C == D and A != H and A == I)):
+          insereBaixo = C
+        else:
+          insereBaixo = np.uint8(np.floor((A + C) * 0.5))
+
+        insereBaixoDireita = B
+
+
+      elif(A == D and B == C):# Se ambos
+        if(A == B):# Caso os 4 pixels sejam iguais, os pixels inseridos serão iguais (não é borda)
+          insereDireita = A
+          insereBaixo = A
+          insereBaixoDireita = A
+        else:# Se ampos aparentam ser bordas, direita e baixo serão um valor entre os pixels, e  da diagonal, será decidido com base em qual tem mais chance de ser a borda
+          insereDireita = np.uint8(np.floor((A + B) * 0.5))
+          insereBaixo = np.uint8(np.floor((A + C) * 0.5))
+
+          majAcumulador = 0
+          majAcumulador += majMatch(B, A, G, E)
+          majAcumulador += majMatch(B, A, K, F)
+          majAcumulador += majMatch(B, A, H, N)
+          majAcumulador += majMatch(B, A, L, O)
+          if(majAcumulador > 0):
+            insereBaixoDireita = A
+          elif(majAcumulador < 0):
+            insereBaixoDireita = B
+          else:
+            insereBaixoDireita = interpolacaoBilinear(A, B, C, D)
+
+
+      else:# se nhenhuma dupla de pixel for igual, verifica se há alguma borda mais aos cantos
+
+        if(A == C and A == F and B != E and B == J):
+          insereDireita = A
+        elif(B == E and B == D and A != F and A == I):
+          insereDireita = B
+        else:
+          inseredireita = A
+
+        if(A == B and A == H and G != C and C == M):
+          insereBaixo = A
+        elif(C == G and C == D and A != H and A == I):
+          insereBaixo = C
+        else:
+          insereBaixo = np.uint8(np.floor((A + C) * 0.5))
+          
+        insereBaixoDireita = interpolacaoBilinear(A, B, C, D)
+
+
+
+
+      # O pixel mantem seu Valor
+      # Insere cada um dos pixels adicionados, conforme cálculos acima
+      image_out[i*2, j*2] = A
+      image_out[i*2, j*2+1] = insereDireita
+      image_out[i*2+1, j*2] = insereBaixo
+      image_out[i*2+1, j*2+1] = insereBaixoDireita
+
+  return image_out
